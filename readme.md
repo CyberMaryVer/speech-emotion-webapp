@@ -7,17 +7,21 @@ This project is a part of the final **Data Mining** project for **ITC Class of F
 
 ## Installation
 
-This project doesn't require an installation. I you want to experiment with the code just **clone** the repo. 
-It is recommended to use the provided `requeriments.txt` file to set your virtual environment.
+It is recommended to use the provided `requirements.txt` file to set your virtual environment.
 
-To set your virtual environment follow this commands from the project directory.
+To install the app run this commands
 
-```bash
+```sh
+!git clone https://github.com/CyberMaryVer/speech-emotion-webapp.git
+!cd speech-emotion-webapp
 !python -m virtualenv your_venv
 !your_venv/Scripts/activate
 !pip install -r requirements.txt
 ```
-
+After that you can run the app
+```sh
+!streamlit run api-test.py
+```
 ## Usage
 Example of an execution:
 
