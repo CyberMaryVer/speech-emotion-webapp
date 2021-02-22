@@ -3,16 +3,16 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-import pandas as pd
+# import pandas as pd
 import cv2
 import librosa
 import librosa.display
-import sound
+# import sound
 from tensorflow.keras.models import load_model
 
 # load models
 model = load_model("model.h5")
-# tmodel = load_model("tmodel_all.h5")
+tmodel = load_model("tmodel_all.h5")
 
 # costants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
@@ -68,8 +68,8 @@ def get_melspec(audio):
 
 @st.cache
 def get_mfccs(audio, limit):
-  y, sr = librosa.load(audio, sr=44100)
-  a = librosa.feature.mfcc(y, sr=44100, n_mfcc = 20)
+  y, sr = librosa.load(audio)
+  a = librosa.feature.mfcc(y, sr=sr, n_mfcc = 20)
   if a.shape[1] > limit:
     mfccs = a[:,:limit]
   elif a.shape[1] < limit:
@@ -97,13 +97,19 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
                 "sad":"lightblue"}
 
   if data3 is None:
-      pos = data6[3] + data6[5]
-      neu = data6[2]
+      pos = data6[3]
+      neu = data6[2] + data6[5]
       neg = data6[0] + data6[1] + data6[4]
       data3 = np.array([pos, neu, neg])
 
   ind = categories6[data6.argmax()]
   color6 = color_dict[ind]
+
+  # parameters for sector highlighting #6
+  theta6 = np.linspace(0.0, 2 * np.pi, data6.shape[0], endpoint=False)
+  radii6 = np.zeros_like(data6)
+  radii6[data6.argmax()] = data6.max() * 10
+  width6 = np.pi / 1.8 * data6
 
   data6 = list(data6)
   n = len(data6)
@@ -114,6 +120,12 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
   ind = categories3[data3.argmax()]
   color3 = color_dict[ind]
 
+  # parameters for sector highlighting #3
+  theta3 = np.linspace(0.0, 2 * np.pi, data3.shape[0], endpoint=False)
+  radii3 = np.zeros_like(data3)
+  radii3[data3.argmax()] = data3.max() * 10
+  width3 = np.pi / 1.8 * data3
+
   data3 = list(data3)
   n = len(data3)
   data3 += data3[:1]
@@ -122,11 +134,11 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
 
   # fig = plt.figure(figsize=(10, 4))
   fig.set_facecolor('#d1d1e0')
+
   ax = plt.subplot(122, polar="True")
-  # ax.set_facecolor('#d1d1e0')
   plt.polar(angles6, data6, color=color6)
   plt.fill(angles6, data6, facecolor=color6, alpha=0.25)
-
+  ax.bar(theta6, radii6, width=width6, bottom=0.0, color=color6, alpha=0.25)
   ax.spines['polar'].set_color('lightgrey')
   ax.set_theta_offset(np.pi / 3)
   ax.set_theta_direction(-1)
@@ -140,7 +152,7 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
   # ax.set_facecolor('#d1d1e0')
   plt.polar(angles3, data3, color=color3, linewidth=2, linestyle="--", alpha=.8)
   plt.fill(angles3, data3, facecolor=color3, alpha=0.25)
-
+  ax.bar(theta3, radii3, width=width3, bottom=0.0, color=color3, alpha=0.25)
   ax.spines['polar'].set_color('lightgrey')
   ax.set_theta_offset(np.pi / 6)
   ax.set_theta_direction(-1)
@@ -149,7 +161,7 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
   plt.yticks([0, .25, .5, .75, 1], color="grey", size=8)
   plt.title("BIG 3", color=color3)
   plt.ylim(0, 1)
-  plt.suptitle(title)
+  plt.suptitle(title, color="darkblue", size=12)
   plt.subplots_adjust(top=0.75)
 
 def main():
@@ -208,25 +220,23 @@ def main():
             plt.gca().axes.spines["top"].set_visible(False)
             st.write(fig)
 
-            data3 = np.array([.8, .9, .2])
-
             st.title("Getting the result...")
 
             mfccs = get_mfccs(path, model.input_shape[-1])
             mfccs = mfccs.reshape(1, *mfccs.shape)
             pred = model.predict(mfccs)[0]
-            txt = get_title(pred)
+            txt = "MFCCS\n" + get_title(pred)
             fig = plt.figure(figsize=(10, 4))
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
-            # mel = get_melspec(path)
-            # mel = mel.reshape(1, *mel.shape)
-            # tpred = model.predict(mel)[0]
-            # txt = get_title(tpred)
-            # fig = plt.figure(figsize=(10, 4))
-            # plot_emotions(data3=data3, data6=tpred, fig=fig, title=txt)
-            # st.write(fig)
+            mel = get_melspec(path)[0]
+            mel = mel.reshape(1, *mel.shape)
+            tpred = tmodel.predict(mel)[0]
+            txt = "Mel-spectrograms\n" + get_title(tpred)
+            fig = plt.figure(figsize=(10, 4))
+            plot_emotions(data6=tpred, fig=fig, title=txt)
+            st.write(fig)
 
     elif choice == "Dataset analysis":
         st.subheader("Dataset analysis")
