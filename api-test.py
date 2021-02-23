@@ -19,8 +19,8 @@ CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
 CAT3 = ["positive", "neutral", "negative"]
 
 # page settings
-st.set_page_config(layout="wide")
-# 
+# st.set_page_config(layout="wide")
+#
 # max_width = 1000
 # padding_top = 0
 # padding_right = "20%"
@@ -258,4 +258,4 @@ if __name__ == '__main__':
 # rerun.
 
 
-st.button("Re-run")
+# st.button("Re-run")
