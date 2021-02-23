@@ -1,1 +1,1 @@
-web: echo PORT $PORT && sh setup.sh && streamlit run --server.port $PORT api-test.py
+web: echo PORT $PORT && sh setup.sh && streamlit run --server.port $PORT test.py
