@@ -9,25 +9,38 @@ import librosa
 import librosa.display
 # import sound
 from tensorflow.keras.models import load_model
+# import base64
 
 # load models
 model = load_model("model2.h5")
 # tmodel = load_model("tmodel_all.h5")
 
-# costants
+# constants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
 CAT3 = ["positive", "neutral", "negative"]
 
 # page settings
 st.set_page_config(layout="wide")
 
-# max_width = 1000
-# padding_top = 0
-# padding_right = "20%"
-# padding_left = "10%"
-# padding_bottom = 0
-# COLOR = "#1f1f2e"
-# BACKGROUND_COLOR = "#d1d1e0"
+
+# @st.cache(allow_output_mutation=True)
+# def get_base64_of_bin_file(bin_file):
+#     with open(bin_file, 'rb') as f:
+#         data = f.read()
+#     return base64.b64encode(data).decode()
+#
+# bin_str = get_base64_of_bin_file('images/back.jpg')
+# page_bg_img = '''
+# <style>
+#
+# body {
+# background-image: url("data:image/png;base64,%s");
+# background-size: cover;
+# }
+#
+# </style>
+# ''' % bin_str
+# st.markdown(page_bg_img, unsafe_allow_html=True)
 
 st.markdown(
         f"""
@@ -168,7 +181,7 @@ def main():
     st.title("Speech Emotion Recognition")
     st.sidebar.markdown("## Use the menu to navigate on the site")
 
-    menu = ["Upload audio", "Dataset analysis", "About"]
+    menu = ["Upload audio", "Dataset analysis", "Our team"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Upload audio":
@@ -222,6 +235,7 @@ def main():
 
             st.title("Getting the result...")
 
+            # mfccs model results
             mfccs = get_mfccs(path, model.input_shape[-1])
             mfccs = mfccs.reshape(1, *mfccs.shape)
             pred = model.predict(mfccs)[0]
@@ -230,6 +244,7 @@ def main():
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
+            # # mel-spec model results
             # mel = get_melspec(path)[0]
             # mel = mel.reshape(1, *mel.shape)
             # tpred = tmodel.predict(mel)[0]
@@ -244,7 +259,7 @@ def main():
 
 
     else:
-        st.subheader("About")
+        st.subheader("Our team")
         st.info("maria.s.startseva@gmail.com")
         st.info("talbaram3192@gmail.com")
         st.info("asherholder123@gmail.com")

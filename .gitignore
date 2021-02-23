@@ -2,6 +2,3 @@ venv
 test
 whyhere.wav
 model_tal.h5
-Procfile
-Aptfile
-test.py
