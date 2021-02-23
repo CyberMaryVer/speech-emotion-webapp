@@ -12,7 +12,7 @@ from tensorflow.keras.models import load_model
 
 # load models
 model = load_model("model2.h5")
-tmodel = load_model("tmodel_all.h5")
+# tmodel = load_model("tmodel_all.h5")
 
 # costants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
@@ -230,13 +230,13 @@ def main():
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
-            mel = get_melspec(path)[0]
-            mel = mel.reshape(1, *mel.shape)
-            tpred = tmodel.predict(mel)[0]
-            txt = "Mel-spectrograms\n" + get_title(tpred)
-            fig = plt.figure(figsize=(10, 4))
-            plot_emotions(data6=tpred, fig=fig, title=txt)
-            st.write(fig)
+            # mel = get_melspec(path)[0]
+            # mel = mel.reshape(1, *mel.shape)
+            # tpred = tmodel.predict(mel)[0]
+            # txt = "Mel-spectrograms\n" + get_title(tpred)
+            # fig = plt.figure(figsize=(10, 4))
+            # plot_emotions(data6=tpred, fig=fig, title=txt)
+            # st.write(fig)
 
     elif choice == "Dataset analysis":
         st.subheader("Dataset analysis")
