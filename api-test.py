@@ -69,7 +69,7 @@ def get_melspec(audio):
 @st.cache
 def get_mfccs(audio, limit):
   y, sr = librosa.load(audio)
-  a = librosa.feature.mfcc(y, sr=sr, n_mfcc = 20)
+  a = librosa.feature.mfcc(y, sr=sr, n_mfcc = 40)
   if a.shape[1] > limit:
     mfccs = a[:,:limit]
   elif a.shape[1] < limit:
