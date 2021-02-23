@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run api-test.py
+web: sh setup.sh && streamlit run api-test.py --server.enableCORS=false --server.enableWebsocketCompression=false
