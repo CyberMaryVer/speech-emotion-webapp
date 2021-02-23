@@ -39,11 +39,13 @@ if __name__ == '__main__':
     try:
         st.text("Model is loading...")
         model = load_model("model2.h5")
-    except:
+    except Exception as ex:
         st.write("Error: model #1 is not loaded")
+        st.write(ex)
     try:
         st.text("Model is loading...")
         tmodel = load_model("tmodel_all.h5")
-    except:
+    except Exception as ex:
         st.write("Error: model #2 is not loaded")
+        st.write(ex)
     st.write("Hello world")
