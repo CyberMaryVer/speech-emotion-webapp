@@ -11,7 +11,7 @@ import librosa.display
 from tensorflow.keras.models import load_model
 
 # load models
-model = load_model("model.h5")
+model = load_model("model2.h5")
 tmodel = load_model("tmodel_all.h5")
 
 # costants
