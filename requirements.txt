@@ -97,10 +97,10 @@ smmap==3.0.5
 sound==0.1.0
 SoundFile==0.10.3.post1
 streamlit==0.76.0
-tensorboard==2.4.1
+tensorboard==2.2.1
 tensorboard-plugin-wit==1.8.0
-tensorflow-cpu==2.4.0rc4
-tensorflow-estimator==2.4.0
+tensorflow-cpu==2.2.0rc4
+tensorflow-estimator==2.2.0
 termcolor==1.1.0
 terminado==0.9.2
 testpath==0.4.4
