@@ -3,8 +3,15 @@ import streamlit as st
 from tensorflow.keras.models import load_model
 
 # load models
-model = load_model("model2.h5")
-# tmodel = load_model("tmodel_all.h5")
+try:
+    model = load_model("model2.h5")
+except:
+    model=None
+
+try:
+    tmodel = load_model("tmodel_all.h5")
+except:
+    model=None
 
 # page settings
 st.set_page_config(layout="wide")
@@ -39,4 +46,9 @@ st.markdown(
 
 if __name__ == '__main__':
     np.random.seed(0)
-    st.write("Hello world. The model #1 is loaded")
+    st.title("Test")
+    if model == None:
+        st.write("Error: model #1 is not loaded")
+    if tmodel == None:
+        st.write("Error: model #2 is not loaded")
+    st.write("Hello world")
