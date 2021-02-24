@@ -225,7 +225,7 @@ def main():
             mfccs = get_mfccs(path, model.input_shape[-1])
             mfccs = mfccs.reshape(1, *mfccs.shape)
             pred = model.predict(mfccs)[0]
-            txt = "MFCCS\n" + get_title(pred)
+            txt = "MFCCs\n" + get_title(pred)
             fig = plt.figure(figsize=(10, 4))
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
