@@ -4,16 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 # import pandas as pd
+# import plotly.express as px
 import cv2
 import librosa
 import librosa.display
 # import sound
 from tensorflow.keras.models import load_model
-# import base64
+from PIL import Image
 
 # load models
 model = load_model("model2.h5")
-# tmodel = load_model("tmodel_all.h5")
+tmodel = load_model("tmodel_all.h5")
 
 # constants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
@@ -21,26 +22,6 @@ CAT3 = ["positive", "neutral", "negative"]
 
 # page settings
 st.set_page_config(layout="wide")
-
-
-# @st.cache(allow_output_mutation=True)
-# def get_base64_of_bin_file(bin_file):
-#     with open(bin_file, 'rb') as f:
-#         data = f.read()
-#     return base64.b64encode(data).decode()
-#
-# bin_str = get_base64_of_bin_file('images/back.jpg')
-# page_bg_img = '''
-# <style>
-#
-# body {
-# background-image: url("data:image/png;base64,%s");
-# background-size: cover;
-# }
-#
-# </style>
-# ''' % bin_str
-# st.markdown(page_bg_img, unsafe_allow_html=True)
 
 st.markdown(
         f"""
@@ -179,7 +160,10 @@ def plot_emotions(fig, data6, data3=None, title="Detected emotion",
 
 def main():
     st.title("Speech Emotion Recognition")
-    st.sidebar.markdown("## Use the menu to navigate on the site")
+    st.sidebar.markdown("### Use the menu to navigate on the site")
+    img = Image.open("images/emotion3.jpg")
+    with st.sidebar:
+        st.image(img, width=300)
 
     menu = ["Upload audio", "Dataset analysis", "Our team"]
     choice = st.sidebar.selectbox("Menu", menu)
@@ -244,18 +228,20 @@ def main():
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
-            # # mel-spec model results
-            # mel = get_melspec(path)[0]
-            # mel = mel.reshape(1, *mel.shape)
-            # tpred = tmodel.predict(mel)[0]
-            # txt = "Mel-spectrograms\n" + get_title(tpred)
-            # fig = plt.figure(figsize=(10, 4))
-            # plot_emotions(data6=tpred, fig=fig, title=txt)
-            # st.write(fig)
+            # mel-spec model results
+            mel = get_melspec(path)[0]
+            mel = mel.reshape(1, *mel.shape)
+            tpred = tmodel.predict(mel)[0]
+            txt = "Mel-spectrograms\n" + get_title(tpred)
+            fig = plt.figure(figsize=(10, 4))
+            plot_emotions(data6=tpred, fig=fig, title=txt)
+            st.write(fig)
 
     elif choice == "Dataset analysis":
         st.subheader("Dataset analysis")
-        # with st.echo(code_location='below'):
+        # df = pd.read_csv("df_audio.csv")
+        # fig = px.violin(df, y="source", x="emotion4", color="actors", box=True, points="all", hover_data=df.columns)
+        # st.plotly_chart(fig, use_container_width=True)
 
 
     else:

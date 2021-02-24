@@ -1,7 +1,7 @@
 # Speech Emotion Recognition ![Python](https://img.shields.io/badge/python-v3.8+-blue.svg) ![version](https://img.shields.io/badge/version-1.0.0-green)
 
 Web-application based on ML model for recognition of emotion for selected audio file
-
+![img](images/smileyfacesboxes.jpg)
 ## Description
 This project is a part of the final **Data Mining** project for **ITC Fellow Program 2020**. 
 
@@ -14,6 +14,8 @@ Datasets used in this project
 Digital signal processing is an emerging field of research in this era. Recently, many researchers have developed a various approaches in this area for SER from over the past decade.
 
 Typically, the SER task is divided into two main sections: features selection and classification. The discriminative features selection and classification method that correctly recognizes the emotional state of the speaker in this domain is a challenging task
+
+![img](images/emotion2.jpg)
 
 Nowadays, mostly researchers utilize deep learning techniques for SER using Mel-scale filter bank speech spectrogram as an input feature. A spectrogram is a 2-D representation of speech signals which is widely used in convolutional neural networks (CNNs) for extracting the salient and discriminative features. Similarly, we can utilize the transfer learning strategies for SER using speech spectrograms passing through pre-trained CNNs models like VGG, DenseNet or Alex-Net. 
 
