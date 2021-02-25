@@ -39,7 +39,7 @@ if __name__ == '__main__':
     st.title("Test")
     try:
         st.text("Model is loading...")
-        model = tf.keras.models.load_model("model2.h5")
+        model = tf.keras.models.load_model("archive/model2.h5")
     except Exception as ex:
         st.write("Error: model #1 is not loaded")
         st.write(ex)

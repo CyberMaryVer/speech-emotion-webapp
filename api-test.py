@@ -3,8 +3,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-# import pandas as pd
-import plotly.express as px
+import pandas as pd
+# import plotly.express as px
 import cv2
 import librosa
 import librosa.display
@@ -17,8 +17,17 @@ model = load_model("model3.h5")
 
 # constants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
+CAT7 = ['fear', 'disgust', 'neutral', 'happy', 'sad', 'surprise', 'angry']
 CAT3 = ["positive", "neutral", "negative"]
-
+COLOR_DICT = {"neutral": "grey",
+              "positive": "green",
+              "happy": "green",
+              "surprise": "orange",
+              "fear": "purple",
+              "negative": "red",
+              "angry": "red",
+              "sad": "lightblue",
+              "disgust":"brown"}
 # page settings
 st.set_page_config(layout="wide")
 
@@ -77,17 +86,55 @@ def get_title(predictions, categories=CAT6):
     return title
 
 @st.cache
-def plot_emotions(fig, data6, data3=None, title="Detected emotion",
-                  categories6=CAT6, categories3=CAT3):
+def plot_polar(fig, predictions, categories, title,
+               colors=COLOR_DICT, plot_only_three=False):
+    # color_sector = "grey"
+    if plot_only_three:
+        pos = predictions[3]
+        neu = predictions[2] + predictions[5]
+        neg = predictions[0] + predictions[1] + predictions[4]
+        predictions = np.array([pos, neu, neg])
+        categories = ["positive", "neutral", "negative"]
 
-  color_dict = {"neutral":"grey",
-                "positive":"green",
-                "happy": "green",
-                "surprise":"orange",
-                "fear":"purple",
-                "negative":"red",
-                "angry":"red",
-                "sad":"lightblue"}
+    N = len(predictions)
+    ind = predictions.argmax()
+
+    COLOR = color_sector = colors[categories[ind]]
+    theta = np.linspace(0.0, 2 * np.pi, N, endpoint=False)
+    radii = np.zeros_like(predictions)
+    radii[predictions.argmax()] = predictions.max() * 10
+    width = np.pi / 1.8 * predictions
+    fig.set_facecolor("#d1d1e0")
+    ax = plt.subplot(121, polar="True")
+    ax.bar(theta, radii, width=width, bottom=0.0, color=color_sector, alpha=0.25)
+
+    angles = [i / float(N) * 2 * np.pi for i in range(N)]
+    angles += angles[:1]
+
+    data = list(predictions)
+    data += data[:1]
+    plt.polar(angles, data, color=COLOR, linewidth=2)
+    plt.fill(angles, data, facecolor=COLOR, alpha=0.25)
+
+    ax.spines['polar'].set_color('lightgrey')
+    ax.set_theta_offset(np.pi / 3)
+    ax.set_theta_direction(-1)
+    plt.xticks(angles[:-1], categories)
+    ax.set_rlabel_position(0)
+    plt.yticks([0, .25, .5, .75, 1], color="grey", size=8)
+    plt.suptitle(title, color="darkblue", size=12)
+    plt.title(f"BIG {N}\n", color=COLOR)
+    plt.ylim(0, 1)
+    ax = plt.subplot(122)
+    img = Image.open("images/spectrum.png")
+    plt.imshow(img)
+    ################################################################################
+    plt.subplots_adjust(top=0.75)
+    plt.axis("off")
+
+@st.cache
+def plot_emotions(fig, data6, data3=None, title="Detected emotion",
+                  categories6=CAT6, categories3=CAT3, color_dict=COLOR_DICT):
 
   if data3 is None:
       pos = data6[3]
@@ -167,6 +214,7 @@ def main():
     menu = ["Upload audio", "Dataset analysis", "Our team"]
     choice = st.sidebar.selectbox("Menu", menu)
     st.sidebar.markdown("### Settings:")
+    show_more_labels = st.sidebar.checkbox("Show prediction for 7 emotions")
     show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
     show_gender = st.sidebar.checkbox("Show gender prediction")
 
@@ -230,32 +278,70 @@ def main():
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
+            if show_more_labels:
+                model_ = load_model("model4.h5")
+                mfccs_ = get_mfccs(path, model_.input_shape[-2])
+                mfccs_ = mfccs_.T.reshape(1, *mfccs_.T.shape)
+                pred = model_.predict(mfccs_)[0]
+                txt = "MFCCs\n" + get_title(pred, CAT7)
+                fig = plt.figure(figsize=(10, 4))
+                plot_polar(fig, predictions=pred, categories=CAT7, title=txt)
+                st.write(fig)
+
             if show_gender:
                 gmodel = load_model("model_mw.h5")
-                mfccs = get_mfccs(path, gmodel.input_shape[-1])
-                mfccs = mfccs.reshape(1, *mfccs.shape)
-                gpred = gmodel.predict(mfccs)[0]
+                gmfccs = get_mfccs(path, gmodel.input_shape[-1])
+                gmfccs = gmfccs.reshape(1, *gmfccs.shape)
+                gpred = gmodel.predict(gmfccs)[0]
                 gdict = [["female","woman.png"], ["male","man.png"]]
                 ind = gpred.argmax()
-                st.subheader(gdict[ind][0])
-                img = Image.open("images/"+gdict[ind][1])
+                txt = "Predicted gender: " + gdict[ind][0]
+                st.subheader(txt)
+                img = Image.open("images/"+ gdict[ind][1])
                 st.image(img, width=300)
 
             if show_mel:
-                tmodel = load_model("tmodel_all.h5")
+                st.subheader("This section was disabled")
+                st.write("Since we are currently using a free tier instance of AWS, "
+                         "we are not going to deploy this model.\n\n"
+                         "If you want to try it we recommend to clone our GitHub repo")
+                link = '[GitHub](https://github.com/CyberMaryVer/speech-emotion-webapp)'
+                st.markdown(link, unsafe_allow_html=True)
 
-                # mel-spec model results
-                mel = get_melspec(path)[0]
-                mel = mel.reshape(1, *mel.shape)
-                tpred = tmodel.predict(mel)[0]
-                txt = "Mel-spectrograms\n" + get_title(tpred)
-                fig = plt.figure(figsize=(10, 4))
-                plot_emotions(data6=tpred, fig=fig, title=txt)
-                st.write(fig)
+                st.write("After that, just uncomment this section in the main file "
+                         "to use the mel-spectrograms model:")
+                code = '''
+                # tmodel = load_model("tmodel_all.h5")
+                #
+                # # mel-spec model results
+                # mel = get_melspec(path)[0]
+                # mel = mel.reshape(1, *mel.shape)
+                # tpred = tmodel.predict(mel)[0]
+                # txt = "Mel-spectrograms" + get_title(tpred)
+                # fig = plt.figure(figsize=(10, 4))
+                # plot_emotions(data6=tpred, fig=fig, title=txt)
+                # st.write(fig)'''
+                st.code(code, language='python')
+                # tmodel = load_model("tmodel_all.h5")
+                #
+                # # mel-spec model results
+                # mel = get_melspec(path)[0]
+                # mel = mel.reshape(1, *mel.shape)
+                # tpred = tmodel.predict(mel)[0]
+                # txt = "Mel-spectrograms\n" + get_title(tpred)
+                # fig = plt.figure(figsize=(10, 4))
+                # plot_emotions(data6=tpred, fig=fig, title=txt)
+                # st.write(fig)
 
     elif choice == "Dataset analysis":
         st.subheader("Dataset analysis")
-        # df = pd.read_csv("df_audio.csv")
+        link = '[GitHub](https://github.com/talbaram3192/Emotion_Recognition)'
+        st.markdown(link, unsafe_allow_html=True)
+        df = pd.read_csv("df_audio.csv")
+        st.write(df.head(20))
+        st.write(df.source.value_counts())
+        st.write(df.actors.value_counts())
+        st.write(df.emotion4.value_counts())
         # fig = px.violin(df, y="source", x="emotion4", color="actors", box=True, points="all", hover_data=df.columns)
         # st.plotly_chart(fig, use_container_width=True)
 

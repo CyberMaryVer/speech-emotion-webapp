@@ -96,6 +96,7 @@ six==1.15.0
 smmap==3.0.5
 sound==0.1.0
 SoundFile==0.10.3.post1
+# sudo yum install git cmake libmad-devel libsndfile-devel gd-devel boost-devel
 streamlit==0.76.0
 tensorboard==2.4.1
 tensorboard-plugin-wit==1.8.0
