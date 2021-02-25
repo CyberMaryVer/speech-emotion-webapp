@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 # import pandas as pd
-# import plotly.express as px
+import plotly.express as px
 import cv2
 import librosa
 import librosa.display
@@ -14,7 +14,6 @@ from PIL import Image
 
 # load models
 model = load_model("model3.h5")
-tmodel = load_model("tmodel_all.h5")
 
 # constants
 CAT6 = ['fear', 'angry', 'neutral', 'happy', 'sad', 'surprise']
@@ -168,7 +167,8 @@ def main():
     menu = ["Upload audio", "Dataset analysis", "Our team"]
     choice = st.sidebar.selectbox("Menu", menu)
     st.sidebar.markdown("### Settings:")
-    show_mel = st.sidebar.checkbox("Show Mel-spec model")
+    show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
+    show_gender = st.sidebar.checkbox("Show gender prediction")
 
     if choice == "Upload audio":
 
@@ -230,7 +230,20 @@ def main():
             plot_emotions(data6=pred, fig=fig, title=txt)
             st.write(fig)
 
+            if show_gender:
+                gmodel = load_model("model_mw.h5")
+                mfccs = get_mfccs(path, gmodel.input_shape[-1])
+                mfccs = mfccs.reshape(1, *mfccs.shape)
+                gpred = gmodel.predict(mfccs)[0]
+                gdict = [["female","woman.png"], ["male","man.png"]]
+                ind = gpred.argmax()
+                st.subheader(gdict[ind][0])
+                img = Image.open("images/"+gdict[ind][1])
+                st.image(img, width=300)
+
             if show_mel:
+                tmodel = load_model("tmodel_all.h5")
+
                 # mel-spec model results
                 mel = get_melspec(path)[0]
                 mel = mel.reshape(1, *mel.shape)
