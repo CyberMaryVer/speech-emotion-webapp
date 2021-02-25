@@ -13,7 +13,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 
 # load models
-model = load_model("model2.h5")
+model = load_model("model3.h5")
 tmodel = load_model("tmodel_all.h5")
 
 # constants
