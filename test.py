@@ -39,7 +39,7 @@ st.markdown(
 
 # @st.cache
 def log_file(txt=None):
-    with open(os.path.join("test1.txt"), "a") as f:
+    with open(os.path.join("archive/test1.txt"), "a") as f:
         datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         f.write(f"{txt} - {datetoday};\n")
 
