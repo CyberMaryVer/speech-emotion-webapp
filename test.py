@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import os
 from datetime import datetime
+import streamlit.components.v1 as components
 
 starttime = datetime.now()
 # page settings
@@ -36,13 +37,13 @@ st.markdown(
         unsafe_allow_html=True,
     )
 
-@st.cache
-def log_file():
+# @st.cache
+def log_file(txt=None):
     with open(os.path.join("test1.txt"), "a") as f:
-        txt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        f.write(f"{txt};\n")
+        datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        f.write(f"{txt} - {datetoday};\n")
 
-@st.cache
+
 def load_file():
     starttime = datetime.now()
     try:
@@ -68,6 +69,9 @@ def load_file():
 if __name__ == '__main__':
     st.title("Hello world")
     user_input = st.text_area("label goes here")
+    if st.button("Submit"):
+        log_file(user_input)
+        st.success(f"Message\n\"\"\"\n{user_input}\n\"\"\"\nwas sent")
 
     if st.button("loadfile"):
         load_file()
@@ -76,3 +80,16 @@ if __name__ == '__main__':
     if st.button("logfile"):
         log_file()
         st.success("yeah!")
+
+    if st.button("baloons"):
+        st.balloons()
+
+    st.sidebar.info('Use menu for navigation')
+    st.set_option('deprecation.showfileUploaderEncoding', False)
+    selectbox = st.sidebar.selectbox("How would you like to predict?", ("mfccs", "mel-specs"))
+    color = st.select_slider('Select a color of the rainbow',
+                             options = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'])
+
+    # embed streamlit docs in a streamlit app
+    components.iframe("https://en.wikipedia.org/wiki/Emotion_recognition",
+                      height=1000, scrolling=True)

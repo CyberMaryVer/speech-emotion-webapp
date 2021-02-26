@@ -8,7 +8,7 @@ import plotly.express as px
 import cv2
 import librosa
 import librosa.display
-# import sound
+from datetime import datetime
 from tensorflow.keras.models import load_model
 from PIL import Image
 
@@ -50,6 +50,10 @@ st.markdown(
         unsafe_allow_html=True,
     )
 
+def log_file(txt=None):
+    with open(os.path.join("log.txt"), "a") as f:
+        datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        f.write(f"{txt} - {datetoday};\n")
 
 @st.cache
 def save_audio(file):
@@ -69,7 +73,7 @@ def save_audio(file):
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
 
-@st.cache
+# @st.cache
 def get_melspec(audio):
   y, sr = librosa.load(audio, sr=44100)
   X = librosa.stft(y)
@@ -81,7 +85,7 @@ def get_melspec(audio):
   rgbImage = np.repeat(grayImage[..., np.newaxis], 3, -1)
   return (rgbImage, Xdb)
 
-@st.cache
+# @st.cache
 def get_mfccs(audio, limit):
   y, sr = librosa.load(audio)
   a = librosa.feature.mfcc(y, sr=sr, n_mfcc = 40)
@@ -218,31 +222,30 @@ def main():
     with st.sidebar:
         st.image(img, width=300)
 
-    menu = ["Emotion recognition", "Dataset description", "Our team"]
+    menu = ["Emotion recognition", "Dataset description", "Our team", "Leave feedback"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Emotion recognition":
-        st.sidebar.markdown("### Settings:")
-        show_more_labels = st.sidebar.checkbox("Show prediction for 7 emotions")
-        show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
-        show_gender = st.sidebar.checkbox("Show gender prediction")
-
-        st.subheader("Upload audio")
         audio_file = st.file_uploader("Upload audio file", type=['wav'])
-
         if st.button('Record'):
-            with st.spinner(f'Recording for 5 seconds ....'):
-                st.write("Recording...")
+            with st.sidebar.spinner(f'Recording for 5 seconds ....'):
+                st.sidebar.write("Recording...")
                 time.sleep(3)
-            st.success("Recording completed")
+            st.sidebar.success("Recording completed")
+
+
 
         if audio_file is not None:
-            st.title("Analyzing...")
+            st.markdown("## Analyzing...")
+            st.sidebar.subheader("Audio file")
             file_details = {"Filename": audio_file.name, "FileSize": audio_file.size}
-            st.write(file_details)
-            # st.subheader(f"File {file_details['Filename']}")
-
+            st.sidebar.write(file_details)
             st.audio(audio_file, format='audio/wav', start_time=0)
+
+            st.sidebar.markdown("### Settings:")
+            show_more_labels = st.sidebar.checkbox("Show prediction for 7 emotions")
+            show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
+            show_gender = st.sidebar.checkbox("Show gender prediction")
 
             path = os.path.join("audio", audio_file.name)
             save_audio(audio_file)
@@ -274,7 +277,7 @@ def main():
             plt.gca().axes.spines["top"].set_visible(False)
             st.write(fig)
 
-            st.title("Getting the result...")
+            st.markdown("## Getting the result...")
 
             # mfccs model results
             with st.spinner('Wait for it...'):
@@ -356,17 +359,26 @@ def main():
         df = pd.read_csv("df_audio.csv")
         fig = px.violin(df, y="source", x="emotion4", color="actors", box=True, points="all", hover_data=df.columns)
         st.plotly_chart(fig, use_container_width=True)
-        st.write(df.source.value_counts())
-        st.write(df.actors.value_counts())
-        st.write(df.emotion4.value_counts())
+        # st.write(df.source.value_counts())
+        # st.write(df.actors.value_counts())
+        # st.write(df.emotion4.value_counts())
 
-    else:
+    elif choice == "Our team":
         st.subheader("Our team")
         st.info("maria.s.startseva@gmail.com")
         st.info("talbaram3192@gmail.com")
         st.info("asherholder123@gmail.com")
         st.balloons()
 
+    else:
+        st.subheader("Leave feedback")
+        user_input = st.text_area("Your feedback is greatly appreciated")
+        user_name = st.selectbox("Choose your personality", ["checker1","checker2","checker3","checker4"])
+        if st.button("Submit"):
+            log_file(user_name + " " + user_input)
+            st.success(f"Message\n\"\"\"{user_input}\"\"\"\nwas sent")
+            thankimg = Image.open("images/sticky.png")
+            st.image(thankimg)
 
 if __name__ == '__main__':
     main()
