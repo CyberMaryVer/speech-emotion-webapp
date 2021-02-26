@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
-# import plotly.express as px
+import plotly.express as px
 import cv2
 import librosa
 import librosa.display
@@ -53,7 +53,20 @@ st.markdown(
 
 @st.cache
 def save_audio(file):
-    with open(os.path.join("audio", file.name), "wb") as f:
+    folder = "audio"
+    # clear the folder to avoid storage overload
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    with open(os.path.join("test.txt"), "a") as f:
+        f.write(f"{file.name} - {file.size};\n")
+
+    with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
 
 @st.cache
@@ -87,14 +100,8 @@ def get_title(predictions, categories=CAT6):
 
 @st.cache
 def plot_polar(fig, predictions, categories, title,
-               colors=COLOR_DICT, plot_only_three=False):
+               colors=COLOR_DICT):
     # color_sector = "grey"
-    if plot_only_three:
-        pos = predictions[3]
-        neu = predictions[2] + predictions[5]
-        neg = predictions[0] + predictions[1] + predictions[4]
-        predictions = np.array([pos, neu, neg])
-        categories = ["positive", "neutral", "negative"]
 
     N = len(predictions)
     ind = predictions.argmax()
@@ -211,14 +218,14 @@ def main():
     with st.sidebar:
         st.image(img, width=300)
 
-    menu = ["Upload audio", "Dataset analysis", "Our team"]
+    menu = ["Emotion recognition", "Dataset description", "Our team"]
     choice = st.sidebar.selectbox("Menu", menu)
-    st.sidebar.markdown("### Settings:")
-    show_more_labels = st.sidebar.checkbox("Show prediction for 7 emotions")
-    show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
-    show_gender = st.sidebar.checkbox("Show gender prediction")
 
-    if choice == "Upload audio":
+    if choice == "Emotion recognition":
+        st.sidebar.markdown("### Settings:")
+        show_more_labels = st.sidebar.checkbox("Show prediction for 7 emotions")
+        show_mel = st.sidebar.checkbox("Show Mel-spec model prediction")
+        show_gender = st.sidebar.checkbox("Show gender prediction")
 
         st.subheader("Upload audio")
         audio_file = st.file_uploader("Upload audio file", type=['wav'])
@@ -270,37 +277,41 @@ def main():
             st.title("Getting the result...")
 
             # mfccs model results
-            mfccs = get_mfccs(path, model.input_shape[-1])
-            mfccs = mfccs.reshape(1, *mfccs.shape)
-            pred = model.predict(mfccs)[0]
-            txt = "MFCCs\n" + get_title(pred)
-            fig = plt.figure(figsize=(10, 4))
-            plot_emotions(data6=pred, fig=fig, title=txt)
-            st.write(fig)
-
-            if show_more_labels:
-                model_ = load_model("model4.h5")
-                mfccs_ = get_mfccs(path, model_.input_shape[-2])
-                mfccs_ = mfccs_.T.reshape(1, *mfccs_.T.shape)
-                pred = model_.predict(mfccs_)[0]
-                txt = "MFCCs\n" + get_title(pred, CAT7)
+            with st.spinner('Wait for it...'):
+                mfccs = get_mfccs(path, model.input_shape[-1])
+                mfccs = mfccs.reshape(1, *mfccs.shape)
+                pred = model.predict(mfccs)[0]
+                txt = "MFCCs\n" + get_title(pred)
                 fig = plt.figure(figsize=(10, 4))
-                plot_polar(fig, predictions=pred, categories=CAT7, title=txt)
+                plot_emotions(data6=pred, fig=fig, title=txt)
                 st.write(fig)
 
+            if show_more_labels:
+                with st.spinner('Wait for it...'):
+                    model_ = load_model("model4.h5")
+                    mfccs_ = get_mfccs(path, model_.input_shape[-2])
+                    mfccs_ = mfccs_.T.reshape(1, *mfccs_.T.shape)
+                    pred = model_.predict(mfccs_)[0]
+                    txt = "MFCCs\n" + get_title(pred, CAT7)
+                    fig = plt.figure(figsize=(10, 4))
+                    plot_polar(fig, predictions=pred, categories=CAT7, title=txt)
+                    st.write(fig)
+
             if show_gender:
-                gmodel = load_model("model_mw.h5")
-                gmfccs = get_mfccs(path, gmodel.input_shape[-1])
-                gmfccs = gmfccs.reshape(1, *gmfccs.shape)
-                gpred = gmodel.predict(gmfccs)[0]
-                gdict = [["female","woman.png"], ["male","man.png"]]
-                ind = gpred.argmax()
-                txt = "Predicted gender: " + gdict[ind][0]
-                st.subheader(txt)
-                img = Image.open("images/"+ gdict[ind][1])
-                st.image(img, width=300)
+                with st.spinner('Wait for it...'):
+                    gmodel = load_model("model_mw.h5")
+                    gmfccs = get_mfccs(path, gmodel.input_shape[-1])
+                    gmfccs = gmfccs.reshape(1, *gmfccs.shape)
+                    gpred = gmodel.predict(gmfccs)[0]
+                    gdict = [["female","woman.png"], ["male","man.png"]]
+                    ind = gpred.argmax()
+                    txt = "Predicted gender: " + gdict[ind][0]
+                    st.subheader(txt)
+                    img = Image.open("images/"+ gdict[ind][1])
+                    st.image(img, width=300)
 
             if show_mel:
+                #################################################################################
                 st.subheader("This section was disabled")
                 st.write("Since we are currently using a free tier instance of AWS, "
                          "we are not going to deploy this model.\n\n"
@@ -322,6 +333,9 @@ def main():
                 # plot_emotions(data6=tpred, fig=fig, title=txt)
                 # st.write(fig)'''
                 st.code(code, language='python')
+                #################################################################################
+
+                ############## Uncomment this section below to enable the model #################
                 # tmodel = load_model("tmodel_all.h5")
                 #
                 # # mel-spec model results
@@ -332,25 +346,26 @@ def main():
                 # fig = plt.figure(figsize=(10, 4))
                 # plot_emotions(data6=tpred, fig=fig, title=txt)
                 # st.write(fig)
+                #################################################################################
 
-    elif choice == "Dataset analysis":
+    elif choice == "Dataset description":
         st.subheader("Dataset analysis")
         link = '[GitHub](https://github.com/talbaram3192/Emotion_Recognition)'
         st.markdown(link, unsafe_allow_html=True)
+
         df = pd.read_csv("df_audio.csv")
-        st.write(df.head(20))
+        fig = px.violin(df, y="source", x="emotion4", color="actors", box=True, points="all", hover_data=df.columns)
+        st.plotly_chart(fig, use_container_width=True)
         st.write(df.source.value_counts())
         st.write(df.actors.value_counts())
         st.write(df.emotion4.value_counts())
-        # fig = px.violin(df, y="source", x="emotion4", color="actors", box=True, points="all", hover_data=df.columns)
-        # st.plotly_chart(fig, use_container_width=True)
-
 
     else:
         st.subheader("Our team")
         st.info("maria.s.startseva@gmail.com")
         st.info("talbaram3192@gmail.com")
         st.info("asherholder123@gmail.com")
+        st.balloons()
 
 
 if __name__ == '__main__':
