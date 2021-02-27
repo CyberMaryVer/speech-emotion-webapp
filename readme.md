@@ -2,6 +2,7 @@
 
 Web-application based on ML model for recognition of emotion for selected audio file
 ![img](images/smileyfacesboxes.jpg)
+
 ## Description
 This project is a part of the final **Data Mining** project for **ITC Fellow Program 2020**. 
 

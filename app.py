@@ -1,16 +1,17 @@
 import numpy as np
 import streamlit as st
-import tensorflow as tf
+# import tensorflow as tf
 import cv2
 import librosa
 import librosa.display
 from tensorflow.keras.models import load_model
 import os
 from datetime import datetime
-import time
+# import time
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 from PIL import Image
+from melspec import plot_colored_polar, plot_melspec
 
 # load models
 model = load_model("model3.h5")
@@ -153,12 +154,7 @@ def plot_polar(fig, predictions=TEST_PRED, categories=TEST_CAT,
     plt.suptitle(title, color="darkblue", size=12)
     plt.title(f"BIG {N}\n", color=COLOR)
     plt.ylim(0, 1)
-    # ax = plt.subplot(122)
-    # img = Image.open("images/spectrum.png")
-    # plt.imshow(img)
-    ################################################################################
     plt.subplots_adjust(top=0.75)
-    # plt.axis("off")
 
 def main():
     side_img = Image.open("images/emotion3.jpg")
@@ -178,18 +174,46 @@ def main():
         st.markdown("## Upload the file")
         with st.beta_container():
             col1, col2 = st.beta_columns(2)
+            # audio_file = None
+            # path = None
             with col1:
                 audio_file = st.file_uploader("Upload audio file", type=['wav'])
                 if audio_file is not None:
-                    st.audio(audio_file, format='audio/wav', start_time=0)
+                    path = os.path.join("audio", audio_file.name)
+                    save_audio(audio_file)
+                    # extract features
+                    try:
+                        wav, sr = librosa.load(path, sr=44100)
+                        Xdb = get_melspec(path)[1]
+                        mfccs = librosa.feature.mfcc(wav, sr=sr)
+                        # display audio
+                        st.audio(audio_file, format='audio/wav', start_time=0)
+                    except Exception as e:
+                        audio_file = None
+                        st.error(f"Error {e} - wrong format of the file. Try another file.")
             with col2:
-                st.write("Record audio file")
-                if st.button('Record'):
-                    with st.spinner(f'Recording for 5 seconds ....'):
-                        st.write("Recording...")
-                        time.sleep(3)
-                    st.success("Recording completed")
-                    st.write("Error while loading the file")
+                if audio_file is not None:
+                    fig = plt.figure(figsize=(10, 2))
+                    fig.set_facecolor('#d1d1e0')
+                    plt.title("Wave-form")
+                    librosa.display.waveplot(wav, sr=44100)
+                    plt.gca().axes.get_yaxis().set_visible(False)
+                    plt.gca().axes.get_xaxis().set_visible(False)
+                    plt.gca().axes.spines["right"].set_visible(False)
+                    plt.gca().axes.spines["left"].set_visible(False)
+                    plt.gca().axes.spines["top"].set_visible(False)
+                    plt.gca().axes.spines["bottom"].set_visible(False)
+                    plt.gca().axes.set_facecolor('#d1d1e0')
+                    st.write(fig)
+                else:
+                    pass
+            #     st.write("Record audio file")
+            #     if st.button('Record'):
+            #         with st.spinner(f'Recording for 5 seconds ....'):
+            #             st.write("Recording...")
+            #             time.sleep(3)
+            #         st.success("Recording completed")
+            #         st.write("Error while loading the file")
 
         if model_type == "mfccs":
             em3 = st.sidebar.checkbox("3 emotions", True)
@@ -198,67 +222,59 @@ def main():
             gender = st.sidebar.checkbox("gender")
 
         elif model_type == "mel-specs":
-            st.sidebar.warning("This model is temporarily disabled")
+            st.sidebar.warning("This model is in the test mode")
+
         else:
             st.sidebar.warning("This model is temporarily disabled")
 
-        with st.sidebar.beta_expander("Change colors"):
-            st.sidebar.write("Use this options after you got the plots")
-            col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
-
-            with col1:
-                a = st.color_picker("Angry", value="#FF0000")
-            with col2:
-                f = st.color_picker("Fear", value="#800080")
-            with col3:
-                d = st.color_picker("Disgust", value="#A52A2A")
-            with col4:
-                sd = st.color_picker("Sad", value="#ADD8E6")
-            with col5:
-                n = st.color_picker("Neutral", value="#808080")
-            with col6:
-                sp = st.color_picker("Surprise", value="#FFA500")
-            with col7:
-                h = st.color_picker("Happy", value="#008000")
-            if st.button("Update colors"):
-                global COLOR_DICT
-                COLOR_DICT = {"neutral": n,
-                              "positive": h,
-                              "happy": h,
-                              "surprise": sp,
-                              "fear": f,
-                              "negative": a,
-                              "angry": a,
-                              "sad": sd,
-                              "disgust": d}
-                st.success(COLOR_DICT)
+        # with st.sidebar.beta_expander("Change colors"):
+        #     st.sidebar.write("Use this options after you got the plots")
+        #     col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
+        #
+        #     with col1:
+        #         a = st.color_picker("Angry", value="#FF0000")
+        #     with col2:
+        #         f = st.color_picker("Fear", value="#800080")
+        #     with col3:
+        #         d = st.color_picker("Disgust", value="#A52A2A")
+        #     with col4:
+        #         sd = st.color_picker("Sad", value="#ADD8E6")
+        #     with col5:
+        #         n = st.color_picker("Neutral", value="#808080")
+        #     with col6:
+        #         sp = st.color_picker("Surprise", value="#FFA500")
+        #     with col7:
+        #         h = st.color_picker("Happy", value="#008000")
+        #     if st.button("Update colors"):
+        #         global COLOR_DICT
+        #         COLOR_DICT = {"neutral": n,
+        #                       "positive": h,
+        #                       "happy": h,
+        #                       "surprise": sp,
+        #                       "fear": f,
+        #                       "negative": a,
+        #                       "angry": a,
+        #                       "sad": sd,
+        #                       "disgust": d}
+        #         st.success(COLOR_DICT)
 
         if audio_file is not None:
             st.markdown("## Analyzing...")
             st.sidebar.subheader("Audio file")
             file_details = {"Filename": audio_file.name, "FileSize": audio_file.size}
             st.sidebar.write(file_details)
-            path = os.path.join("audio", audio_file.name)
-            save_audio(audio_file)
-
-            # extract features
-            wav, sr = librosa.load(path, sr=44100)
-            Xdb = get_melspec(path)[1]
 
             with st.beta_container():
                 col1, col2 = st.beta_columns(2)
                 with col1:
                     fig = plt.figure(figsize=(10, 2))
                     fig.set_facecolor('#d1d1e0')
-                    plt.title("Wave-form")
-                    librosa.display.waveplot(wav, sr=sr)
+                    plt.title("MFCCs")
+                    librosa.display.specshow(mfccs, sr=sr, x_axis='time')
                     plt.gca().axes.get_yaxis().set_visible(False)
-                    # plt.gca().axes.get_xaxis().set_visible(False)
                     plt.gca().axes.spines["right"].set_visible(False)
                     plt.gca().axes.spines["left"].set_visible(False)
                     plt.gca().axes.spines["top"].set_visible(False)
-                    # plt.gca().axes.spines["bottom"].set_visible(False)
-                    plt.gca().axes.set_facecolor('#d1d1e0')
                     st.write(fig)
                 with col2:
                     fig2 = plt.figure(figsize=(10, 2))
@@ -281,23 +297,27 @@ def main():
 
                     with col1:
                         if em3:
-                            pos = pred[3]
-                            neu = pred[2] + pred[5]
-                            neg = pred[0] + pred[1] + pred[4]
+                            pos = pred[3] + pred[5]*.5
+                            neu = pred[2] + pred[5]*.5 + pred[4]*.5
+                            neg = pred[0] + pred[1] + pred[4]*.5
                             data3 = np.array([pos, neu, neg])
                             txt = "MFCCs\n" + get_title(data3, CAT3)
                             fig = plt.figure(figsize=(5, 5))
                             COLORS = color_dict(COLOR_DICT)
-                            plot_polar(fig, predictions=data3, categories=CAT3,
-                                       title=txt, colors=COLORS)
+                            plot_colored_polar(fig, predictions=data3, categories=CAT3,
+                                               title=txt, colors=COLORS)
+                            # plot_polar(fig, predictions=data3, categories=CAT3,
+                                       # title=txt, colors=COLORS)
                             st.write(fig)
                     with col2:
                         if em6:
                             txt = "MFCCs\n" + get_title(pred, CAT6)
                             fig2 = plt.figure(figsize=(5, 5))
                             COLORS = color_dict(COLOR_DICT)
-                            plot_polar(fig2, predictions=pred, categories=CAT6,
-                                       title=txt, colors=COLORS)
+                            plot_colored_polar(fig2, predictions=pred, categories=CAT6,
+                                               title=txt, colors=COLORS)
+                            # plot_polar(fig2, predictions=pred, categories=CAT6,
+                            #            title=txt, colors=COLORS)
                             st.write(fig2)
                     with col3:
                         if em7:
@@ -308,8 +328,10 @@ def main():
                             txt = "MFCCs\n" + get_title(pred_, CAT7)
                             fig3 = plt.figure(figsize=(5, 5))
                             COLORS = color_dict(COLOR_DICT)
-                            plot_polar(fig3, predictions=pred_, categories=CAT7,
-                                       title=txt, colors=COLORS)
+                            plot_colored_polar(fig3, predictions=pred_, categories=CAT7,
+                                               title=txt, colors=COLORS)
+                            # plot_polar(fig3, predictions=pred_, categories=CAT7,
+                            #            title=txt, colors=COLORS)
                             st.write(fig3)
                     with col4:
                         if gender:
@@ -322,10 +344,7 @@ def main():
                                 ind = gpred.argmax()
                                 txt = "Predicted gender: " + gdict[ind][0]
                                 img = Image.open("images/" + gdict[ind][1])
-                                # st.subheader("Predicted gender:")
-                                # st.markdown("## male")
-                                # img = Image.open("images/man.png")
-                                # st.image(img, width=200)
+
                                 fig4 = plt.figure(figsize=(3, 3))
                                 fig4.set_facecolor('#d1d1e0')
                                 plt.title(txt)
@@ -333,13 +352,34 @@ def main():
                                 plt.axis("off")
                                 st.write(fig4)
 
+            if model_type == "mel-specs":
+                st.markdown("## Predictions")
+                try:
+                    with st.spinner("Wait... It can take some time"):
+                        tmodel = load_model("tmodel_all.h5")
+                        fig, tpred = plot_melspec(path, tmodel)
+                    col1, col2, col3 = st.beta_columns(3)
+                    with col1:
+                        st.markdown("### Emotional spectrum")
+                        dimg = Image.open("images/spectrum.png")
+                        st.image(dimg, use_column_width=True)
+                    with col2:
+                        fig_, tpred_ = plot_melspec(path=path,
+                                                    tmodel=tmodel,
+                                                    three=True)
+                        st.write(fig_, use_column_width=True)
+                    with col3:
+                        st.write(fig, use_column_width=True)
+                except:
+                    st.error("Unknown error")
+
 
     elif website_menu == "Project description":
         import pandas as pd
         import plotly.express as px
         st.title("Project description")
         st.subheader("GitHub")
-        link = '[GitHub repository of the project]' \
+        link = '[GitHub repository of the web-application]' \
                '(https://github.com/CyberMaryVer/speech-emotion-webapp)'
         st.markdown(link, unsafe_allow_html=True)
 
@@ -374,14 +414,25 @@ def main():
         st.code("git clone https://github.com/CyberMaryVer/speech-emotion-webapp.git", language='bash')
 
         st.write("After that, just uncomment the relevant sections in the app.py file "
-                 "to use the mel-spectrogram model:")
+                 "to use these models:")
 
     elif website_menu == "Our team":
         st.subheader("Our team")
-        st.info("maria.s.startseva@gmail.com")
-        st.info("talbaram3192@gmail.com")
-        st.info("asherholder123@gmail.com")
         st.balloons()
+        col1, col2 = st.beta_columns([3,2])
+        with col1:
+            st.info("maria.s.startseva@gmail.com")
+            st.info("talbaram3192@gmail.com")
+            st.info("asherholder123@gmail.com")
+        with col2:
+            liimg = Image.open("images/LI-Logo.png")
+            st.image(liimg)
+            st.markdown(f""":speech_balloon: [Maria Startseva](https://www.linkedin.com/in/maria-startseva)""",
+                        unsafe_allow_html=True)
+            st.markdown(f""":speech_balloon: [Tal Baram](https://www.linkedin.com/in/tal-baram-b00b66180)""",
+                        unsafe_allow_html=True)
+            st.markdown(f""":speech_balloon: [Asher Holder](https://www.linkedin.com/in/asher-holder-526a05173)""",
+                        unsafe_allow_html=True)
 
     elif website_menu == "Leave feedback":
         st.subheader("Leave feedback")
@@ -396,6 +447,7 @@ def main():
     else:
         import requests
         import json
+
         url = 'http://api.quotable.io/random'
         if st.button("get random mood"):
             with st.beta_container():
