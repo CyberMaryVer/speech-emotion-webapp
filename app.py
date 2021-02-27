@@ -64,7 +64,7 @@ st.markdown(STYLE, unsafe_allow_html=True)
 
 # @st.cache
 def log_file(txt=None):
-    with open(os.path.join("archive/test1.txt"), "a") as f:
+    with open(os.path.join("log.txt"), "a") as f:
         datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         f.write(f"{txt} - {datetoday};\n")
 
@@ -85,27 +85,6 @@ def save_audio(file):
 
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
-
-def load_file():
-    starttime = datetime.now()
-    try:
-        with st.spinner('Wait for it...'):
-            st.text("Model is loading...")
-            model = tf.keras.models.load_model("archive/model2.h5")
-        st.success("Done!")
-    except Exception as ex:
-        st.write("Error: model #1 is not loaded")
-        st.write(ex)
-    try:
-        with st.spinner('Wait for it...'):
-            st.text("Model is loading...")
-            tmodel = load_model("tmodel_all.h5")
-        st.success("Done!")
-    except Exception as ex:
-        st.write("Error: model #2 is not loaded")
-        st.write(ex)
-    endtime = datetime.now() - starttime
-    st.markdown(f"### Loading time: {endtime}")
 
 # @st.cache
 def get_melspec(audio):
