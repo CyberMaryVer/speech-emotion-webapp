@@ -42,7 +42,7 @@ To install the app run this commands
 ```
 After that you can run the app
 ```sh
-!streamlit run api-test.py
+!streamlit run api-app.py
 ```
 ## Usage
 Example of an execution:

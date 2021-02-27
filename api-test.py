@@ -29,7 +29,7 @@ COLOR_DICT = {"neutral": "grey",
               "sad": "lightblue",
               "disgust":"brown"}
 # page settings
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", page_title="Speech Emotion Recognition app", page_icon="random")
 
 st.markdown(
         f"""
