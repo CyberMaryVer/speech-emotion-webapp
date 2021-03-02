@@ -1,6 +1,7 @@
 import numpy as np
 import streamlit as st
 # import tensorflow as tf
+# import tf_agents
 import cv2
 import librosa
 import librosa.display
@@ -62,6 +63,10 @@ STYLE = f"""
 </style>
 """
 st.markdown(STYLE, unsafe_allow_html=True)
+
+# @st.cache(hash_funcs={tf_agents.utils.object_identity.ObjectIdentityDictionary: load_model})
+# def load_model_cache(model):
+#     return load_model(model)
 
 # @st.cache
 def log_file(txt=None):
@@ -190,7 +195,9 @@ def main():
                         st.audio(audio_file, format='audio/wav', start_time=0)
                     except Exception as e:
                         audio_file = None
-                        st.error(f"Error {e} - wrong format of the file. Try another file.")
+                        st.error(f"Error {e} - wrong format of the file. Probably "
+                                 f"it is because the supposed wav file is not an exactly wav file, "
+                                 f"but aac file. Try another file.")
             with col2:
                 if audio_file is not None:
                     fig = plt.figure(figsize=(10, 2))
@@ -222,7 +229,7 @@ def main():
             gender = st.sidebar.checkbox("gender")
 
         elif model_type == "mel-specs":
-            st.sidebar.warning("This model is in the test mode")
+            st.sidebar.warning("This model is temporarily disabled")
 
         else:
             st.sidebar.warning("This model is temporarily disabled")
@@ -352,26 +359,29 @@ def main():
                                 plt.axis("off")
                                 st.write(fig4)
 
-            if model_type == "mel-specs":
-                st.markdown("## Predictions")
-                try:
-                    with st.spinner("Wait... It can take some time"):
-                        tmodel = load_model("tmodel_all.h5")
-                        fig, tpred = plot_melspec(path, tmodel)
-                    col1, col2, col3 = st.beta_columns(3)
-                    with col1:
-                        st.markdown("### Emotional spectrum")
-                        dimg = Image.open("images/spectrum.png")
-                        st.image(dimg, use_column_width=True)
-                    with col2:
-                        fig_, tpred_ = plot_melspec(path=path,
-                                                    tmodel=tmodel,
-                                                    three=True)
-                        st.write(fig_, use_column_width=True)
-                    with col3:
-                        st.write(fig, use_column_width=True)
-                except:
-                    st.error("Unknown error")
+            # if model_type == "mel-specs":
+                # st.markdown("## Predictions")
+                # st.warning("The model in test mode. It may not be working properly.")
+                # if st.checkbox("I'm OK with it"):
+                #     try:
+                #         with st.spinner("Wait... It can take some time"):
+                #             global tmodel
+                #             tmodel = load_model_cache("tmodel_all.h5")
+                #             fig, tpred = plot_melspec(path, tmodel)
+                #         col1, col2, col3 = st.beta_columns(3)
+                #         with col1:
+                #             st.markdown("### Emotional spectrum")
+                #             dimg = Image.open("images/spectrum.png")
+                #             st.image(dimg, use_column_width=True)
+                #         with col2:
+                #             fig_, tpred_ = plot_melspec(path=path,
+                #                                         tmodel=tmodel,
+                #                                         three=True)
+                #             st.write(fig_, use_column_width=True)
+                #         with col3:
+                #             st.write(fig, use_column_width=True)
+                #     except Exception as e:
+                #         st.error(f"Error {e}, model is not loaded")
 
 
     elif website_menu == "Project description":
@@ -452,14 +462,29 @@ def main():
         if st.button("get random mood"):
             with st.beta_container():
                 col1, col2 = st.beta_columns(2)
+                n = np.random.randint(1, 1000, 1)[0]
                 with col1:
-                    r = requests.get(url=url)
-                    text = json.loads(r.text)
-                    quote, author = text['content'], text['author']
+                    quotes = {"Good job and almost done": "checker1",
+                              "Great start!!": "checker2",
+                              "Please make corrections base on the following observation": "checker3",
+                              "DO NOT train with test data": "folk wisdom",
+                              "good work, but no docstrings": "checker4",
+                              "Well done!":"checker3",
+                              "For the sake of reproducibility, I recommend setting the random seed":"checker1"}
+                    if n%5 == 0:
+                        a = np.random.choice(list(quotes.keys()), 1)[0]
+                        quote, author = a, quotes[a]
+                    else:
+                        try:
+                            r = requests.get(url=url)
+                            text = json.loads(r.text)
+                            quote, author = text['content'], text['author']
+                        except Exception as e:
+                            a = np.random.choice(list(quotes.keys()), 1)[0]
+                            quote, author = a, quotes[a]
                     st.markdown(f"## *{quote}*")
                     st.markdown(f"### ***{author}***")
                 with col2:
-                    n = np.random.randint(1, 1000, 1)[0]
                     st.image(image=f"https://picsum.photos/800/600?random={n}")
 
 

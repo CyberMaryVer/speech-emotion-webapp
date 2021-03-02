@@ -1,16 +1,11 @@
 import numpy as np
-# import streamlit as st
-# import tensorflow as tf
 import cv2
 import librosa
 import librosa.display
 from tensorflow.keras.models import load_model
 import os
 from datetime import datetime
-# import time
-# import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
-# from PIL import Image
 
 # constants
 starttime = datetime.now()

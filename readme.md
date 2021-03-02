@@ -1,6 +1,6 @@
 # Speech Emotion Recognition ![Python](https://img.shields.io/badge/python-v3.8+-blue.svg) ![version](https://img.shields.io/badge/version-1.0.0-green)
 
-Web-application based on ML model for recognition of emotion for selected audio file
+Web-application based on ML model for recognition of emotion for selected audio file. You can try it [**here**](http://34.217.207.244:8501/)
 ![img](images/smileyfacesboxes.jpg)
 
 ## Description
@@ -26,7 +26,7 @@ Mel-Frequency Cepstral Coefficients, which are a representation of the short-ter
 The Mel scale is important because it better approximates human-based perception of sound as opposed to linear scales. In filter-source theory, "the source is the vocal cords and the filter represents the vocal tract." The length and shape of the vocal tract determine how sound is outputted from a human and the cepstrum can describe the filter. 
 
 In our project we have combined two models: pretrained DenseNet for mel-spectrograms and CNN for mfccs. 
-You can find a more detailed description, EDA and ML models [here](https://github.com/talbaram3192/Emotion_Recognition)
+You can find a more detailed description, EDA and ML models [**here**](https://github.com/talbaram3192/Emotion_Recognition)
 
 ## Installation
 
