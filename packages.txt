@@ -4,3 +4,4 @@ gd-devel
 boost-devel
 libmad-devel
 libsndfile-devel
+libsndfile-dev
