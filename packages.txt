@@ -1,6 +1,4 @@
 freeglut3-dev
 libgtk2.0-dev
-gd-dev
-boost-dev
-libmad-dev
+libasound2-dev
 libsndfile-dev
