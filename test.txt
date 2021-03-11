@@ -108,8 +108,14 @@ in-talking-to-the-computer-one-gets-the-sense-that-he's-capable-of-emotional-res
 aren't-you-afraid-i'm-terrified-but-my-father-told-me-you-should-always-face-what-you're-afraid-of.wav - 2113034;
 bits-of-emotion-flying-everywhere!-anger!-frustration!-denial!-fear!-deep-depression-in-fact!-you-see-what-i'm-saying.wav - 1762826;
 it-smells-really-good.wav - 306112;
-free.wav - 13898;
-1001_IEO_DIS_MD.wav - 60904;
-1071_IOM_FEA_XX.wav - 90802;
-1001_IOM_NEU_XX.wav - 79056;
-1091_ITS_FEA_XX.wav - 85462;
+destroy_you.wav - 65148;
+findahappyplace.wav - 13798;
+i-cant-take-this.wav - 288456;
+test4.wav - 236742;
+test4.wav - 236742;
+youve-been-a-very-good.wav - 417972;
+新規録音 #3.wav - 1314918;
+Sound_12595.wav - 259052;
+1086_DFA_DIS_XX.wav - 56634;
+1090_TIE_SAD_XX.wav - 122834;
+
