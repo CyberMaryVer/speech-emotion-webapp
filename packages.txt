@@ -1,2 +1,4 @@
 freeglut3-dev
 libgtk2.0-dev
+libmad-devel
+libsndfile-devel
