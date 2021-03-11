@@ -86,7 +86,7 @@ def save_audio(file):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    with open(os.path.join("test.txt"), "a") as f:
+    with open("~/.streamlit/test.txt", "a") as f:
         f.write(f"{file.name} - {file.size};\n")
 
     with open(os.path.join(folder, file.name), "wb") as f:

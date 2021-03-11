@@ -1,4 +1,5 @@
 mkdir -p ~/.streamlit/
+cat ~/.streamlit/test.txt
 
 echo "\
 [general]\n\
