@@ -43,13 +43,13 @@ To install the app run this commands
 ```
 After that you can run the app
 ```sh
-!streamlit run api-app.py
+!streamlit run app.py
 ```
 ## Usage
 Example of an execution:
 
 You can try the app [here](https://share.streamlit.io/cybermaryver/speech-emotion-webapp/app.py)
-![Alt Text](demo.gif)
+![Alt Text](demo2.gif)
 
 
 ## Contributing
