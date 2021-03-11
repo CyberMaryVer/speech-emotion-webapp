@@ -70,7 +70,7 @@ st.markdown(STYLE, unsafe_allow_html=True)
 
 # @st.cache
 def log_file(txt=None):
-    with open(os.path.join("log.txt"), "a") as f:
+    with open("log.txt", "a") as f:
         datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         f.write(f"{txt} - {datetoday};\n")
 
@@ -86,7 +86,7 @@ def save_audio(file):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    with open("~/.streamlit/test.txt", "a") as f:
+    with open("test.txt", "a") as f:
         f.write(f"{file.name} - {file.size};\n")
 
     with open(os.path.join(folder, file.name), "wb") as f:
