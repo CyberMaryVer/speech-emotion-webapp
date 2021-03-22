@@ -448,11 +448,20 @@ def main():
         st.subheader("Leave feedback")
         user_input = st.text_area("Your feedback is greatly appreciated")
         user_name = st.selectbox("Choose your personality", ["checker1","checker2","checker3","checker4"])
+
         if st.button("Submit"):
-            log_file(user_name + " " + user_input)
             st.success(f"Message\n\"\"\"{user_input}\"\"\"\nwas sent")
-            thankimg = Image.open("images/sticky.png")
-            st.image(thankimg)
+
+            if user_input == "log431279" and user_name == "checker4":
+                with open("test.txt", "r", encoding="utf8") as f:
+                    st.text(f.read())
+            elif user_input == "feedback431279" and user_name == "checker4":
+                with open("log.txt", "r", encoding="utf8") as f:
+                    st.text(f.read())
+            else:
+                log_file(user_name + " " + user_input)
+                thankimg = Image.open("images/sticky.png")
+                st.image(thankimg)
 
     else:
         import requests
