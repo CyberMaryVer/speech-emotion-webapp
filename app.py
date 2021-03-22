@@ -77,6 +77,7 @@ def log_file(txt=None):
 @st.cache
 def save_audio(file):
     folder = "audio"
+    datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     # clear the folder to avoid storage overload
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -87,7 +88,7 @@ def save_audio(file):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     with open("test.txt", "a") as f:
-        f.write(f"{file.name} - {file.size};\n")
+        f.write(f"{file.name} - {file.size} - {datetoday};\n")
 
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
