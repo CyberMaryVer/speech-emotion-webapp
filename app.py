@@ -76,6 +76,8 @@ def log_file(txt=None):
 
 @st.cache
 def save_audio(file):
+    # if not os.path.exists("audio"):
+    #     os.makedirs("audio")
     folder = "audio"
     datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     # clear the folder to avoid storage overload
@@ -89,6 +91,8 @@ def save_audio(file):
 
     with open("test.txt", "a") as f:
         f.write(f"{file.name} - {file.size} - {datetoday};\n")
+        if file.size > 4000000:
+            return 1
 
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
@@ -173,7 +177,7 @@ def main():
 
     if website_menu == "Emotion Recognition":
         st.sidebar.subheader("Model")
-        model_type = st.sidebar.selectbox("How would you like to predict?", ("mfccs", "mel-specs", "ensemble"))
+        model_type = st.sidebar.selectbox("How would you like to predict?", ("mfccs", "mel-specs"))
         em3 = em6 = em7 = gender = False
         st.sidebar.subheader("Settings")
 
@@ -186,19 +190,21 @@ def main():
                 audio_file = st.file_uploader("Upload audio file", type=['wav'])
                 if audio_file is not None:
                     path = os.path.join("audio", audio_file.name)
-                    save_audio(audio_file)
-                    # extract features
-                    try:
-                        wav, sr = librosa.load(path, sr=44100)
-                        Xdb = get_melspec(path)[1]
-                        mfccs = librosa.feature.mfcc(wav, sr=sr)
-                        # display audio
-                        st.audio(audio_file, format='audio/wav', start_time=0)
-                    except Exception as e:
-                        audio_file = None
-                        st.error(f"Error {e} - wrong format of the file. Probably "
-                                 f"it is because the supposed wav file is not an exactly wav file, "
-                                 f"but aac file. Try another file.")
+                    if save_audio(audio_file) == 1:
+                        st.warning("File size is too large. Try another file.")
+                    else:
+                        # extract features
+                        try:
+                            wav, sr = librosa.load(path, sr=44100)
+                            Xdb = get_melspec(path)[1]
+                            mfccs = librosa.feature.mfcc(wav, sr=sr)
+                            # display audio
+                            st.audio(audio_file, format='audio/wav', start_time=0)
+                        except Exception as e:
+                            audio_file = None
+                            st.error(f"Error {e} - wrong format of the file. Probably "
+                                     f"it is because the supposed wav file is not an exactly wav file, "
+                                     f"but aac file. Try another file.")
             with col2:
                 if audio_file is not None:
                     fig = plt.figure(figsize=(10, 2))
