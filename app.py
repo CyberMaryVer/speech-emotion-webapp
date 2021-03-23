@@ -76,8 +76,8 @@ def log_file(txt=None):
 
 @st.cache
 def save_audio(file):
-    # if not os.path.exists("audio"):
-    #     os.makedirs("audio")
+    if not os.path.exists("audio"):
+        os.makedirs("audio")
     folder = "audio"
     datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     # clear the folder to avoid storage overload
