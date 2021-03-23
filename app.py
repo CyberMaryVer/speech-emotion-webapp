@@ -76,6 +76,8 @@ def log_file(txt=None):
 
 @st.cache
 def save_audio(file):
+    if file.size > 4000000:
+        return 1
     if not os.path.exists("audio"):
         os.makedirs("audio")
     folder = "audio"
@@ -89,10 +91,11 @@ def save_audio(file):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    with open("test.txt", "a") as f:
-        f.write(f"{file.name} - {file.size} - {datetoday};\n")
-        if file.size > 4000000:
-            return 1
+    try:
+        with open("test.txt", "a") as f:
+            f.write(f"{file.name} - {file.size} - {datetoday};\n")
+    except:
+        pass
 
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
