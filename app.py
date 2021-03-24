@@ -212,6 +212,15 @@ def main():
                                      f"but aac file. Try another file.")
                     else:
                         st.error("Unknown error")
+                else:
+                    if st.button("Try test file"):
+                        wav, sr = librosa.load("test.wav", sr=44100)
+                        Xdb = get_melspec("test.wav")[1]
+                        mfccs = librosa.feature.mfcc(wav, sr=sr)
+                        # display audio
+                        st.audio("test.wav", format='audio/wav', start_time=0)
+                        path = "test.wav"
+                        audio_file = "test"
             with col2:
                 if audio_file is not None:
                     fig = plt.figure(figsize=(10, 2))
@@ -281,9 +290,10 @@ def main():
 
         if audio_file is not None:
             st.markdown("## Analyzing...")
-            st.sidebar.subheader("Audio file")
-            file_details = {"Filename": audio_file.name, "FileSize": audio_file.size}
-            st.sidebar.write(file_details)
+            if not audio_file == "test":
+                st.sidebar.subheader("Audio file")
+                file_details = {"Filename": audio_file.name, "FileSize": audio_file.size}
+                st.sidebar.write(file_details)
 
             with st.beta_container():
                 col1, col2 = st.beta_columns(2)
