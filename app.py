@@ -203,13 +203,13 @@ def main():
                         st.audio(audio_file, format='audio/wav', start_time=0)
                         try:
                             wav, sr = librosa.load(path, sr=44100)
-                        except:
+                        except Exception as e:
                             audio_file = None
                             st.error(f"Error1 {e}")
 
                         try:
                             Xdb = get_melspec(path)[1]
-                        except:
+                        except Exception as e:
                             audio_file = None
                             st.error(f"Error2 {e}")
 
