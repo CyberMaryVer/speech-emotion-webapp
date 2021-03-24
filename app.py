@@ -199,12 +199,14 @@ def main():
                         st.warning("File size is too large. Try another file.")
                     elif if_save_audio == 0:
                         # extract features
+                        # display audio
+                        st.audio(audio_file, format='audio/wav', start_time=0)
                         try:
                             wav, sr = librosa.load(path, sr=44100)
                             Xdb = get_melspec(path)[1]
                             mfccs = librosa.feature.mfcc(wav, sr=sr)
-                            # display audio
-                            st.audio(audio_file, format='audio/wav', start_time=0)
+                            # # display audio
+                            # st.audio(audio_file, format='audio/wav', start_time=0)
                         except Exception as e:
                             audio_file = None
                             st.error(f"Error {e} - wrong format of the file. Probably "
