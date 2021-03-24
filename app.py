@@ -203,7 +203,17 @@ def main():
                         st.audio(audio_file, format='audio/wav', start_time=0)
                         try:
                             wav, sr = librosa.load(path, sr=44100)
+                        except:
+                            audio_file = None
+                            st.error(f"Error1 {e}")
+
+                        try:
                             Xdb = get_melspec(path)[1]
+                        except:
+                            audio_file = None
+                            st.error(f"Error2 {e}")
+
+                        try:
                             mfccs = librosa.feature.mfcc(wav, sr=sr)
                             # # display audio
                             # st.audio(audio_file, format='audio/wav', start_time=0)
