@@ -74,12 +74,12 @@ def log_file(txt=None):
         datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         f.write(f"{txt} - {datetoday};\n")
 
-@st.cache
+# @st.cache
 def save_audio(file):
     if file.size > 4000000:
         return 1
-    if not os.path.exists("audio"):
-        os.makedirs("audio")
+    # if not os.path.exists("audio"):
+    #     os.makedirs("audio")
     folder = "audio"
     datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     # clear the folder to avoid storage overload
@@ -193,6 +193,8 @@ def main():
             with col1:
                 audio_file = st.file_uploader("Upload audio file", type=['wav'])
                 if audio_file is not None:
+                    if not os.path.exists("audio"):
+                        os.makedirs("audio")
                     path = os.path.join("audio", audio_file.name)
                     if_save_audio = save_audio(audio_file)
                     if if_save_audio == 1:
