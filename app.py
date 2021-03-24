@@ -201,7 +201,6 @@ def main():
                         # extract features
                         # display audio
                         st.audio(audio_file, format='audio/wav', start_time=0)
-                        st.write(os.path.exists(path))
                         try:
                             wav, sr = librosa.load(path, sr=44100)
                             Xdb = get_melspec(path)[1]
