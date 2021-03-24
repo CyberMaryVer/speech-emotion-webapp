@@ -92,7 +92,7 @@ def save_audio(file):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     try:
-        with open("test.txt", "a") as f:
+        with open("log0.txt", "a") as f:
             f.write(f"{file.name} - {file.size} - {datetoday};\n")
     except:
         pass
@@ -480,10 +480,10 @@ def main():
         if st.button("Submit"):
             st.success(f"Message\n\"\"\"{user_input}\"\"\"\nwas sent")
 
-            if user_input == "log431279" and user_name == "checker4":
-                with open("test.txt", "r", encoding="utf8") as f:
+            if user_input == "log123456" and user_name == "checker4":
+                with open("log0.txt", "r", encoding="utf8") as f:
                     st.text(f.read())
-            elif user_input == "feedback431279" and user_name == "checker4":
+            elif user_input == "feedback123456" and user_name == "checker4":
                 with open("log.txt", "r", encoding="utf8") as f:
                     st.text(f.read())
             else:
