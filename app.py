@@ -201,19 +201,10 @@ def main():
                         # extract features
                         # display audio
                         st.audio(audio_file, format='audio/wav', start_time=0)
+                        st.write(os.path.exists(path))
                         try:
                             wav, sr = librosa.load(path, sr=44100)
-                        except Exception as e:
-                            audio_file = None
-                            st.error(f"Error1 {e}")
-
-                        try:
                             Xdb = get_melspec(path)[1]
-                        except Exception as e:
-                            audio_file = None
-                            st.error(f"Error2 {e}")
-
-                        try:
                             mfccs = librosa.feature.mfcc(wav, sr=sr)
                             # # display audio
                             # st.audio(audio_file, format='audio/wav', start_time=0)
