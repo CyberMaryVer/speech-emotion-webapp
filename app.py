@@ -99,6 +99,7 @@ def save_audio(file):
 
     with open(os.path.join(folder, file.name), "wb") as f:
         f.write(file.getbuffer())
+    return 0
 
 # @st.cache
 def get_melspec(audio):
@@ -193,9 +194,10 @@ def main():
                 audio_file = st.file_uploader("Upload audio file", type=['wav'])
                 if audio_file is not None:
                     path = os.path.join("audio", audio_file.name)
-                    if save_audio(audio_file) == 1:
+                    if_save_audio = save_audio(audio_file)
+                    if if_save_audio == 1:
                         st.warning("File size is too large. Try another file.")
-                    else:
+                    elif if_save_audio == 0:
                         # extract features
                         try:
                             wav, sr = librosa.load(path, sr=44100)
@@ -208,6 +210,8 @@ def main():
                             st.error(f"Error {e} - wrong format of the file. Probably "
                                      f"it is because the supposed wav file is not an exactly wav file, "
                                      f"but aac file. Try another file.")
+                    else:
+                        st.error("Unknown error")
             with col2:
                 if audio_file is not None:
                     fig = plt.figure(figsize=(10, 2))
