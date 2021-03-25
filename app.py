@@ -211,9 +211,7 @@ def main():
                             # st.audio(audio_file, format='audio/wav', start_time=0)
                         except Exception as e:
                             audio_file = None
-                            st.error(f"Error {e} - wrong format of the file. Probably "
-                                     f"it is because the supposed wav file is not an exactly wav file, "
-                                     f"but aac file. Try another file.")
+                            st.error(f"Error {e} - wrong format of the file. Try another .wav file.")
                     else:
                         st.error("Unknown error")
                 else:

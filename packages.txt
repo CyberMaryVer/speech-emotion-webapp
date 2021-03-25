@@ -2,3 +2,4 @@ freeglut3-dev
 libgtk2.0-dev
 libasound2-dev
 libsndfile-dev
+ffmpeg
