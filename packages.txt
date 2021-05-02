@@ -1,5 +1,5 @@
 freeglut3-dev
 libgtk2.0-dev
 libasound2-dev
-update libsndfile-dev
+libsndfile-dev
 ffmpeg
