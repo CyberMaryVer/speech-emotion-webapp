@@ -1,5 +1,5 @@
 freeglut3-dev
 libgtk2.0-dev
-libasound2-dev
-libsndfile-dev
+libasound2-dev --fix-missing
+libsndfile-dev --fix-missing
 ffmpeg
