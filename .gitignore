@@ -1,6 +1,8 @@
 venv
 test
 archive
+.idea
+__pycache__/
 model_tal.h5
 our_streamlit_key.pem
 streamlit.pem
