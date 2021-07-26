@@ -1,6 +1,6 @@
 # Speech Emotion Recognition ![Python](https://img.shields.io/badge/python-v3.8+-blue.svg) ![version](https://img.shields.io/badge/version-1.0.0-green)
 
-Web-application based on ML model for recognition of emotion for selected audio file. You can try it [**here**](http://34.217.207.244:8501/)
+Web-application based on ML model for recognition of emotion for selected audio file. You can try it on [streamlit sharing platform](https://share.streamlit.io/cybermaryver/speech-emotion-webapp/app.py) or on [amazon server](http://34.217.207.244:8501/)
 ![img](images/smileyfacesboxes.jpg)
 
 ## Description
