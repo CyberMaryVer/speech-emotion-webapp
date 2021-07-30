@@ -1,10 +1,21 @@
 numpy
-pandas==1.2.4
-matplotlib==3.3.4
-Pillow==8.2.0
-opencv-python-headless==4.5.1.48
-plotly==4.14.3
-requests==2.25.1
-librosa==0.8.0
-streamlit==0.81.1
-tensorflow-cpu==2.4.1
+pandas
+matplotlib
+Pillow
+opencv-python-headless
+plotly
+requests
+librosa
+streamlit
+tensorflow-cpu
+
+# numpy
+# pandas==1.2.4
+# matplotlib==3.3.4
+# Pillow==8.2.0
+# opencv-python-headless==4.5.1.48
+# plotly==4.14.3
+# requests==2.25.1
+# librosa==0.8.0
+# streamlit==0.81.1
+# tensorflow-cpu==2.4.1
