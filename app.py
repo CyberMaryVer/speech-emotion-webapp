@@ -1,14 +1,11 @@
 import numpy as np
 import streamlit as st
-# import tensorflow as tf
-# import tf_agents
 import cv2
 import librosa
 import librosa.display
 from tensorflow.keras.models import load_model
 import os
 from datetime import datetime
-# import time
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -40,29 +37,29 @@ TEST_PRED = np.array([.3, .3, .4, .1, .6, .9, .1])
 # page settings
 st.set_page_config(page_title="SER web-app", page_icon=":speech_balloon:", layout="wide")
 
-max_width = 1500
-padding_top = 0
-padding_right = "5%"
-padding_left = "5%"
-padding_bottom = 0
-COLOR = "#1f1f2e"
-BACKGROUND_COLOR = "#d1d1e0"
-STYLE = f"""
-<style>
-    .reportview-container .main .block-container{{
-        max-width: {max_width}px;
-        padding-top: {padding_top}rem;
-        padding-right: {padding_right}rem;
-        padding-left: {padding_left}rem;
-        padding-bottom: {padding_bottom}rem;
-    }}
-    .reportview-container .main {{
-        color: {COLOR};
-        background-color: {BACKGROUND_COLOR};
-    }}
-</style>
-"""
-st.markdown(STYLE, unsafe_allow_html=True)
+# max_width = 1500
+# padding_top = 0
+# padding_right = "5%"
+# padding_left = "5%"
+# padding_bottom = 0
+# COLOR = "#1f1f2e"
+# BACKGROUND_COLOR = "#d1d1e0"
+# STYLE = f"""
+# <style>
+#     .reportview-container .main .block-container{{
+#         max-width: {max_width}px;
+#         padding-top: {padding_top}rem;
+#         padding-right: {padding_right}rem;
+#         padding-left: {padding_left}rem;
+#         padding-bottom: {padding_bottom}rem;
+#     }}
+#     .reportview-container .main {{
+#         color: {COLOR};
+#         background-color: {BACKGROUND_COLOR};
+#     }}
+# </style>
+# """
+# st.markdown(STYLE, unsafe_allow_html=True)
 
 
 # @st.cache(hash_funcs={tf_agents.utils.object_identity.ObjectIdentityDictionary: load_model})
