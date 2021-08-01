@@ -4,6 +4,6 @@ headless = true
 [theme]
 primaryColor="#1f1f2e"
 backgroundColor="#d1d1e0"
-secondaryBackgroundColor="#643c7b"
-textColor="#ffffff"
+secondaryBackgroundColor="#f0f0f2"
+textColor="#2c2c2e"
 font="monospace"
