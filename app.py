@@ -25,17 +25,17 @@ CAT7 = ['fear', 'disgust', 'neutral', 'happy', 'sad', 'surprise', 'angry']
 CAT3 = ["positive", "neutral", "negative"]
 
 COLOR_DICT = {"neutral": "grey",
-                  "positive": "green",
-                  "happy": "green",
-                  "surprise": "orange",
-                  "fear": "purple",
-                  "negative": "red",
-                  "angry": "red",
-                  "sad": "lightblue",
-                  "disgust":"brown"}
+              "positive": "green",
+              "happy": "green",
+              "surprise": "orange",
+              "fear": "purple",
+              "negative": "red",
+              "angry": "red",
+              "sad": "lightblue",
+              "disgust": "brown"}
 
 TEST_CAT = ['fear', 'disgust', 'neutral', 'happy', 'sad', 'surprise', 'angry']
-TEST_PRED = np.array([.3,.3,.4,.1,.6,.9,.1])
+TEST_PRED = np.array([.3, .3, .4, .1, .6, .9, .1])
 
 # page settings
 st.set_page_config(page_title="SER web-app", page_icon=":speech_balloon:", layout="wide")
@@ -64,6 +64,7 @@ STYLE = f"""
 """
 st.markdown(STYLE, unsafe_allow_html=True)
 
+
 # @st.cache(hash_funcs={tf_agents.utils.object_identity.ObjectIdentityDictionary: load_model})
 # def load_model_cache(model):
 #     return load_model(model)
@@ -73,6 +74,7 @@ def log_file(txt=None):
     with open("log.txt", "a") as f:
         datetoday = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         f.write(f"{txt} - {datetoday};\n")
+
 
 # @st.cache
 def save_audio(file):
@@ -101,28 +103,31 @@ def save_audio(file):
         f.write(file.getbuffer())
     return 0
 
+
 # @st.cache
 def get_melspec(audio):
-  y, sr = librosa.load(audio, sr=44100)
-  X = librosa.stft(y)
-  Xdb = librosa.amplitude_to_db(abs(X))
-  img = np.stack((Xdb,) * 3,-1)
-  img = img.astype(np.uint8)
-  grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-  grayImage = cv2.resize(grayImage, (224, 224))
-  rgbImage = np.repeat(grayImage[..., np.newaxis], 3, -1)
-  return (rgbImage, Xdb)
+    y, sr = librosa.load(audio, sr=44100)
+    X = librosa.stft(y)
+    Xdb = librosa.amplitude_to_db(abs(X))
+    img = np.stack((Xdb,) * 3, -1)
+    img = img.astype(np.uint8)
+    grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    grayImage = cv2.resize(grayImage, (224, 224))
+    rgbImage = np.repeat(grayImage[..., np.newaxis], 3, -1)
+    return (rgbImage, Xdb)
+
 
 # @st.cache
 def get_mfccs(audio, limit):
-  y, sr = librosa.load(audio)
-  a = librosa.feature.mfcc(y, sr=sr, n_mfcc = 40)
-  if a.shape[1] > limit:
-    mfccs = a[:,:limit]
-  elif a.shape[1] < limit:
-    mfccs = np.zeros((a.shape[0], limit))
-    mfccs[:, :a.shape[1]] = a
-  return mfccs
+    y, sr = librosa.load(audio)
+    a = librosa.feature.mfcc(y, sr=sr, n_mfcc=40)
+    if a.shape[1] > limit:
+        mfccs = a[:, :limit]
+    elif a.shape[1] < limit:
+        mfccs = np.zeros((a.shape[0], limit))
+        mfccs[:, :a.shape[1]] = a
+    return mfccs
+
 
 @st.cache
 def get_title(predictions, categories=CAT6):
@@ -130,9 +135,11 @@ def get_title(predictions, categories=CAT6):
     - {predictions.max() * 100:.2f}%"
     return title
 
+
 @st.cache
 def color_dict(coldict=COLOR_DICT):
     return COLOR_DICT
+
 
 @st.cache
 def plot_polar(fig, predictions=TEST_PRED, categories=TEST_CAT,
@@ -169,6 +176,7 @@ def plot_polar(fig, predictions=TEST_PRED, categories=TEST_CAT,
     plt.title(f"BIG {N}\n", color=COLOR)
     plt.ylim(0, 1)
     plt.subplots_adjust(top=0.75)
+
 
 def main():
     side_img = Image.open("images/emotion3.jpg")
@@ -330,9 +338,9 @@ def main():
 
                     with col1:
                         if em3:
-                            pos = pred[3] + pred[5]*.5
-                            neu = pred[2] + pred[5]*.5 + pred[4]*.5
-                            neg = pred[0] + pred[1] + pred[4]*.5
+                            pos = pred[3] + pred[5] * .5
+                            neu = pred[2] + pred[5] * .5 + pred[4] * .5
+                            neg = pred[0] + pred[1] + pred[4] * .5
                             data3 = np.array([pos, neu, neg])
                             txt = "MFCCs\n" + get_title(data3, CAT3)
                             fig = plt.figure(figsize=(5, 5))
@@ -340,7 +348,7 @@ def main():
                             plot_colored_polar(fig, predictions=data3, categories=CAT3,
                                                title=txt, colors=COLORS)
                             # plot_polar(fig, predictions=data3, categories=CAT3,
-                                       # title=txt, colors=COLORS)
+                            # title=txt, colors=COLORS)
                             st.write(fig)
                     with col2:
                         if em6:
@@ -386,28 +394,28 @@ def main():
                                 st.write(fig4)
 
             # if model_type == "mel-specs":
-                # st.markdown("## Predictions")
-                # st.warning("The model in test mode. It may not be working properly.")
-                # if st.checkbox("I'm OK with it"):
-                #     try:
-                #         with st.spinner("Wait... It can take some time"):
-                #             global tmodel
-                #             tmodel = load_model_cache("tmodel_all.h5")
-                #             fig, tpred = plot_melspec(path, tmodel)
-                #         col1, col2, col3 = st.beta_columns(3)
-                #         with col1:
-                #             st.markdown("### Emotional spectrum")
-                #             dimg = Image.open("images/spectrum.png")
-                #             st.image(dimg, use_column_width=True)
-                #         with col2:
-                #             fig_, tpred_ = plot_melspec(path=path,
-                #                                         tmodel=tmodel,
-                #                                         three=True)
-                #             st.write(fig_, use_column_width=True)
-                #         with col3:
-                #             st.write(fig, use_column_width=True)
-                #     except Exception as e:
-                #         st.error(f"Error {e}, model is not loaded")
+            # st.markdown("## Predictions")
+            # st.warning("The model in test mode. It may not be working properly.")
+            # if st.checkbox("I'm OK with it"):
+            #     try:
+            #         with st.spinner("Wait... It can take some time"):
+            #             global tmodel
+            #             tmodel = load_model_cache("tmodel_all.h5")
+            #             fig, tpred = plot_melspec(path, tmodel)
+            #         col1, col2, col3 = st.beta_columns(3)
+            #         with col1:
+            #             st.markdown("### Emotional spectrum")
+            #             dimg = Image.open("images/spectrum.png")
+            #             st.image(dimg, use_column_width=True)
+            #         with col2:
+            #             fig_, tpred_ = plot_melspec(path=path,
+            #                                         tmodel=tmodel,
+            #                                         three=True)
+            #             st.write(fig_, use_column_width=True)
+            #         with col3:
+            #             st.write(fig, use_column_width=True)
+            #     except Exception as e:
+            #         st.error(f"Error {e}, model is not loaded")
 
 
     elif website_menu == "Project description":
@@ -455,7 +463,7 @@ def main():
     elif website_menu == "Our team":
         st.subheader("Our team")
         st.balloons()
-        col1, col2 = st.beta_columns([3,2])
+        col1, col2 = st.beta_columns([3, 2])
         with col1:
             st.info("maria.s.startseva@gmail.com")
             st.info("talbaram3192@gmail.com")
@@ -473,7 +481,7 @@ def main():
     elif website_menu == "Leave feedback":
         st.subheader("Leave feedback")
         user_input = st.text_area("Your feedback is greatly appreciated")
-        user_name = st.selectbox("Choose your personality", ["checker1","checker2","checker3","checker4"])
+        user_name = st.selectbox("Choose your personality", ["checker1", "checker2", "checker3", "checker4"])
 
         if st.button("Submit"):
             st.success(f"Message\n\"\"\"{user_input}\"\"\"\nwas sent")
@@ -504,9 +512,9 @@ def main():
                               "Please make corrections base on the following observation": "checker3",
                               "DO NOT train with test data": "folk wisdom",
                               "good work, but no docstrings": "checker4",
-                              "Well done!":"checker3",
-                              "For the sake of reproducibility, I recommend setting the random seed":"checker1"}
-                    if n%5 == 0:
+                              "Well done!": "checker3",
+                              "For the sake of reproducibility, I recommend setting the random seed": "checker1"}
+                    if n % 5 == 0:
                         a = np.random.choice(list(quotes.keys()), 1)[0]
                         quote, author = a, quotes[a]
                     else:

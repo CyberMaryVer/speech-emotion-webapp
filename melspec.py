@@ -3,7 +3,6 @@ import cv2
 import librosa
 import librosa.display
 from tensorflow.keras.models import load_model
-import os
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -111,4 +110,4 @@ def plot_melspec(path, tmodel=None, three=False,
     return (fig, tpred)
 
 if __name__ == "__main__":
-    plot_melspec("audio/morris3.wav")
+    plot_melspec("test.wav")
