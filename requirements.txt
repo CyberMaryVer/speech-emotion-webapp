@@ -8,7 +8,7 @@ requests
 librosa==0.8.0
 streamlit
 tensorflow-cpu==2.4.1
-
+cffi==1.5.2
 # numpy
 # pandas==1.2.4
 # matplotlib==3.3.4

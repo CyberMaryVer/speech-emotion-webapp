@@ -1,4 +1,3 @@
 libsndfile1-dev
 ffmpeg
 python3-cffi
-cffi==1.5.2
