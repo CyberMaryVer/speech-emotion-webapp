@@ -1,2 +1,3 @@
 libsndfile1-dev
 ffmpeg
+python-cffi
