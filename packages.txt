@@ -1,3 +1,5 @@
 libsndfile1-dev
 ffmpeg
 python3-cffi
+libffi-dev
+python-dev

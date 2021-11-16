@@ -5,7 +5,7 @@ Pillow
 opencv-python-headless==4.5.1.48
 plotly
 requests
-librosa
+librosa==0.8.0
 streamlit==1.0
 tensorflow-cpu==2.4.1
 
