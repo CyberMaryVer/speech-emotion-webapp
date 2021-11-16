@@ -36,30 +36,8 @@ TEST_PRED = np.array([.3, .3, .4, .1, .6, .9, .1])
 
 # page settings
 st.set_page_config(page_title="SER web-app", page_icon=":speech_balloon:", layout="wide")
-
-# max_width = 1500
-# padding_top = 0
-# padding_right = "5%"
-# padding_left = "5%"
-# padding_bottom = 0
 # COLOR = "#1f1f2e"
 # BACKGROUND_COLOR = "#d1d1e0"
-# STYLE = f"""
-# <style>
-#     .reportview-container .main .block-container{{
-#         max-width: {max_width}px;
-#         padding-top: {padding_top}rem;
-#         padding-right: {padding_right}rem;
-#         padding-left: {padding_left}rem;
-#         padding-bottom: {padding_bottom}rem;
-#     }}
-#     .reportview-container .main {{
-#         color: {COLOR};
-#         background-color: {BACKGROUND_COLOR};
-#     }}
-# </style>
-# """
-# st.markdown(STYLE, unsafe_allow_html=True)
 
 
 # @st.cache(hash_funcs={tf_agents.utils.object_identity.ObjectIdentityDictionary: load_model})
@@ -191,8 +169,8 @@ def main():
         st.sidebar.subheader("Settings")
 
         st.markdown("## Upload the file")
-        with st.beta_container():
-            col1, col2 = st.beta_columns(2)
+        with st.container():
+            col1, col2 = st.columns(2)
             # audio_file = None
             # path = None
             with col1:
@@ -264,9 +242,9 @@ def main():
         else:
             st.sidebar.warning("This model is temporarily disabled")
 
-        # with st.sidebar.beta_expander("Change colors"):
+        # with st.sidebar.expander("Change colors"):
         #     st.sidebar.write("Use this options after you got the plots")
-        #     col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
+        #     col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
         #
         #     with col1:
         #         a = st.color_picker("Angry", value="#FF0000")
@@ -302,8 +280,8 @@ def main():
                 file_details = {"Filename": audio_file.name, "FileSize": audio_file.size}
                 st.sidebar.write(file_details)
 
-            with st.beta_container():
-                col1, col2 = st.beta_columns(2)
+            with st.container():
+                col1, col2 = st.columns(2)
                 with col1:
                     fig = plt.figure(figsize=(10, 2))
                     fig.set_facecolor('#d1d1e0')
@@ -327,8 +305,8 @@ def main():
 
             if model_type == "mfccs":
                 st.markdown("## Predictions")
-                with st.beta_container():
-                    col1, col2, col3, col4 = st.beta_columns(4)
+                with st.container():
+                    col1, col2, col3, col4 = st.columns(4)
                     mfccs = get_mfccs(path, model.input_shape[-1])
                     mfccs = mfccs.reshape(1, *mfccs.shape)
                     pred = model.predict(mfccs)[0]
@@ -399,7 +377,7 @@ def main():
             #             global tmodel
             #             tmodel = load_model_cache("tmodel_all.h5")
             #             fig, tpred = plot_melspec(path, tmodel)
-            #         col1, col2, col3 = st.beta_columns(3)
+            #         col1, col2, col3 = st.columns(3)
             #         with col1:
             #             st.markdown("### Emotional spectrum")
             #             dimg = Image.open("images/spectrum.png")
@@ -428,7 +406,7 @@ def main():
         link = '[Theory behind - Medium article]' \
                '(https://talbaram3192.medium.com/classifying-emotions-using-audio-recordings-and-python-434e748a95eb)'
         st.markdown(link + ":clap::clap::clap: Tal!", unsafe_allow_html=True)
-        with st.beta_expander("See Wikipedia definition"):
+        with st.expander("See Wikipedia definition"):
             components.iframe("https://en.wikipedia.org/wiki/Emotion_recognition",
                               height=320, scrolling=True)
 
@@ -460,7 +438,7 @@ def main():
     elif website_menu == "Our team":
         st.subheader("Our team")
         st.balloons()
-        col1, col2 = st.beta_columns([3, 2])
+        col1, col2 = st.columns([3, 2])
         with col1:
             st.info("maria.s.startseva@gmail.com")
             st.info("talbaram3192@gmail.com")
@@ -500,8 +478,8 @@ def main():
 
         url = 'http://api.quotable.io/random'
         if st.button("get random mood"):
-            with st.beta_container():
-                col1, col2 = st.beta_columns(2)
+            with st.container():
+                col1, col2 = st.columns(2)
                 n = np.random.randint(1, 1000, 1)[0]
                 with col1:
                     quotes = {"Good job and almost done": "checker1",
